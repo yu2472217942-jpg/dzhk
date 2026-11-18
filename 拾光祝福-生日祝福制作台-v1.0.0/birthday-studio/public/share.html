@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#f7e8ea">
+  <meta name="format-detection" content="telephone=no">
+  <title>{{PAGE_TITLE}}</title>
+  <meta name="description" content="{{PAGE_DESC}}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{PAGE_TITLE}}">
+  <meta property="og:description" content="{{PAGE_DESC}}">
+  <meta property="og:image" content="{{OG_IMAGE}}">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/static/favicon.png" type="image/png">
+  <link rel="stylesheet" href="/static/share.css">
+</head>
+<body data-theme="{{THEME}}" data-font="{{FONT}}">
+
+<!-- ============ 登录 ============ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-photo" id="loginPhoto"></div>
+  <div class="login-veil"></div>
+  <div class="bubbles" aria-hidden="true">
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+  <div class="login-stars" aria-hidden="true"></div>
+
+  <div class="login-card" id="loginCard">
+    <div class="login-mark">✦</div>
+    <p class="login-eyebrow">A LITTLE SURPRISE FOR YOU</p>
+    <h1>生日快乐</h1>
+    <p class="login-to">给 <b id="loginRecipient">你</b> 的一份小惊喜</p>
+
+    <form class="login-form" id="loginForm" novalidate>
+      <label class="login-field">
+        <span>你的名字</span>
+        <input id="userName" type="text" maxlength="20" placeholder="写下你的名字" autocomplete="name">
+      </label>
+      <label class="login-field">
+        <span>生日密码</span>
+        <input id="pwd" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="输入生日密码" autocomplete="current-password">
+      </label>
+      <button class="login-btn" id="loginBtn" type="submit">
+        <span>进入惊喜</span><span class="arrow">→</span>
+      </button>
+    </form>
+    <p class="login-error" id="loginError"></p>
+    <p class="login-hint" id="loginHint">提示：生日密码</p>
+  </div>
+
+  <p class="login-footer">Made with <span>♡</span> for you</p>
+</div>
+
+<!-- ============ 主页面 ============ -->
+<div class="app hidden" id="app">
+  <button class="music-float" id="musicBtn" type="button" aria-label="背景音乐">
+    <span class="music-disc" id="musicDisc">♪</span>
+    <span class="music-state" id="musicState">音乐</span>
+  </button>
+
+  <canvas class="fx-canvas" id="fxCanvas"></canvas>
+  <div class="tap-hint hidden" id="tapHint">轻触屏幕 · 开启音乐</div>
+
+  <!-- 蛋糕 -->
+  <section class="cake-screen" id="cakeScreen">
+    <div class="cake-glow" aria-hidden="true"></div>
+    <div class="cake-stage">
+      <div class="cake" id="cake" aria-label="生日蛋糕">
+        <div class="cake-plate"></div>
+        <div class="cake-tier tier-3">
+          <span class="tier-frost"></span>
+          <span class="sprinkles"></span>
+        </div>
+        <div class="cake-tier tier-2">
+          <span class="tier-frost"></span>
+          <span class="sprinkles"></span>
+        </div>
+        <div class="cake-tier tier-1">
+          <span class="tier-frost"></span>
+          <span class="sprinkles"></span>
+        </div>
+        <div class="candles" aria-hidden="true">
+          <div class="candle" style="--x:-48px;--h:40px;--delay:0s"><span class="flame"></span></div>
+          <div class="candle" style="--x:-24px;--h:48px;--delay:.2s"><span class="flame"></span></div>
+          <div class="candle" style="--x:0px;--h:44px;--delay:.4s"><span class="flame"></span></div>
+          <div class="candle" style="--x:24px;--h:50px;--delay:.1s"><span class="flame"></span></div>
+          <div class="candle" style="--x:48px;--h:38px;--delay:.3s"><span class="flame"></span></div>
+        </div>
+      </div>
+
+      <p class="cake-eyebrow">HAPPY BIRTHDAY</p>
+      <h2 class="cake-name"><span id="cakeRecipient">你</span>，生日快乐</h2>
+      <p class="cake-wish" id="cakeWish">愿所有美好，都如期而至。</p>
+
+      <div class="cake-actions">
+        <button class="primary-btn" id="likeBtn" type="button"><span class="heart-icon">♥</span> 喜欢</button>
+        <button class="ghost-btn" id="blowBtn" type="button">吹蜡烛</button>
+      </div>
+      <p class="scroll-hint" id="scrollHint"><span>往下滑</span>，还有话想对你说</p>
+    </div>
+  </section>
+
+  <!-- 回忆 -->
+  <section class="memories-screen" id="memoriesScreen">
+    <div class="section-heading">
+      <p class="mini-eyebrow">MEMORIES &amp; WISHES</p>
+      <h2>想和你一起记住的</h2>
+      <p>把一些小小的、闪闪发光的时刻，送给你。</p>
+    </div>
+
+    <div class="timeline" id="memoryList"></div>
+
+    <div class="wish-strip" aria-label="祝福">
+      <span>平安</span><i>✦</i><span>喜乐</span><i>✦</i><span>得偿所愿</span>
+    </div>
+
+    <article class="letter" id="letter">
+      <div class="letter-head">
+        <div class="letter-seal">♡</div>
+        <p class="mini-eyebrow">A LETTER FOR YOU</p>
+        <h2>来自 <span id="letterSender">我</span> 的祝福</h2>
+      </div>
+
+      <div class="letter-body" id="blessingText"></div>
+
+      <div class="voice-section hidden" id="voiceSection">
+        <p class="voice-title"><span id="voiceSender">我</span> 有话对你说</p>
+        <div class="voice-player">
+          <button class="voice-play" id="voicePlay" type="button" aria-label="播放录音">▶</button>
+          <div class="voice-track" id="voiceTrack">
+            <div class="voice-bar" id="voiceBar"></div>
+          </div>
+          <span class="voice-time" id="voiceTime">0:00</span>
+          <audio id="voiceAudio" preload="metadata" playsinline webkit-playsinline></audio>
+        </div>
+      </div>
+
+      <p class="letter-sign">—— <span id="letterSign">我</span></p>
+      <div class="letter-stamp">♡</div>
+    </article>
+
+    <div class="end-actions">
+      <button class="primary-btn" id="fireworksBtn" type="button">再看一次烟花</button>
+      <button class="ghost-btn" id="topBtn" type="button">回到蛋糕</button>
+    </div>
+    <p class="footer">愿你所愿皆成真 <span>·</span> <span id="footerName">我</span></p>
+  </section>
+</div>
+
+<audio id="bgm" loop preload="auto" playsinline webkit-playsinline></audio>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  window.__BLESSING_ID__ = '{{BLESSING_ID}}';
+  window.__META__ = {{META_JSON}};
+</script>
+<script src="/static/fireworks.js"></script>
+<script src="/static/share.js"></script>
+</body>
+</html>

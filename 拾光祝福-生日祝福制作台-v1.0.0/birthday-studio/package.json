@@ -1,0 +1,15 @@
+{
+  "name": "shiguang-blessing-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "拾光祝福 · 可自定义姓名、生日密码、照片、音乐和录音的生日祝福网页制作台",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js --open",
+    "serve": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

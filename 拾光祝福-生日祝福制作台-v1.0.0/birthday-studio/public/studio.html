@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7e8ea">
+  <title>拾光祝福 · 生日祝福制作台</title>
+  <link rel="icon" href="/static/favicon.png" type="image/png">
+  <link rel="stylesheet" href="/static/studio.css">
+</head>
+<body>
+
+<!-- 管理密码锁 -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-glow"></div>
+  <div class="lock-card">
+    <div class="lock-mark">✦</div>
+    <p class="eyebrow">SHIGUANG BLESSING</p>
+    <h1>生日祝福制作台</h1>
+    <p class="lock-sub">把想说的话、照片和声音，做成一份只属于 TA 的小惊喜。</p>
+    <form id="lockForm" class="lock-form">
+      <label class="field">
+        <span>管理密码</span>
+        <input id="adminKey" type="password" maxlength="32" placeholder="输入启动窗口里显示的管理密码" autocomplete="current-password" required>
+      </label>
+      <button class="btn btn-primary btn-block" id="lockBtn" type="submit">进入制作台</button>
+    </form>
+    <p class="lock-error" id="lockError"></p>
+    <p class="lock-tip">管理密码在启动窗口里，也可以查看项目里的 config.json</p>
+  </div>
+</div>
+
+<!-- 主界面 -->
+<div class="studio hidden" id="studio">
+  <header class="topbar">
+    <a class="brand" href="/studio" aria-label="拾光祝福">
+      <span class="brand-mark">✦</span>
+      <span class="brand-text"><b>拾光祝福</b><small>把心意，做成一份小惊喜</small></span>
+    </a>
+    <nav class="top-actions">
+      <button class="btn btn-ghost" id="listBtn" type="button">我的祝福</button>
+      <button class="btn btn-soft" id="newBtn" type="button">＋ 新建祝福</button>
+      <button class="icon-btn" id="logoutBtn" type="button" title="退出登录" aria-label="退出登录">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main class="layout" id="editorLayout">
+    <section class="editor">
+      <div class="editor-head">
+        <div>
+          <p class="eyebrow" id="editorEyebrow">NEW BLESSING</p>
+          <h2 id="editorTitle">写一份新的祝福</h2>
+          <p class="editor-sub" id="editorSub">填好之后，生成链接和二维码，发给 TA。</p>
+        </div>
+        <span class="draft-badge" id="draftBadge">草稿</span>
+      </div>
+
+      <form id="form" novalidate>
+        <!-- 01 主角 -->
+        <section class="form-section">
+          <div class="section-head">
+            <span class="num">01</span>
+            <div><h3>主角</h3><p>这份惊喜是给谁的？</p></div>
+          </div>
+          <div class="grid-2">
+            <label class="field">
+              <span>收件人</span>
+              <input id="recipient" maxlength="20" placeholder="小寿星" autocomplete="off" required>
+            </label>
+            <label class="field">
+              <span>送祝福的人</span>
+              <input id="sender" maxlength="30" placeholder="一个爱你的人" autocomplete="off" required>
+            </label>
+          </div>
+          <div class="grid-2">
+            <label class="field">
+              <span>生日密码 <em>4–8 位数字</em></span>
+              <input id="password" inputmode="numeric" maxlength="8" placeholder="例如 0707" autocomplete="new-password">
+            </label>
+            <label class="field">
+              <span>密码提示</span>
+              <input id="hint" maxlength="30" placeholder="生日（4位数字）" autocomplete="off">
+            </label>
+          </div>
+          <p class="help">TA 打开链接后，需要输入这个生日密码才能看到内容。生日密码只保存加密结果。</p>
+        </section>
+
+        <!-- 02 祝福语 -->
+        <section class="form-section">
+          <div class="section-head">
+            <span class="num">02</span>
+            <div><h3>想说的话</h3><p>会出现在最后一封信里</p></div>
+          </div>
+          <label class="field">
+            <span>祝福语 <em id="blessingCount">0 / 3000</em></span>
+            <textarea id="blessing" rows="7" maxlength="3000" placeholder="愿你新的一岁，眼里有光，心里有爱，想要的都拥有，得不到的都释怀。生日快乐！" required></textarea>
+          </label>
+          <div class="chips" id="templateChips">
+            <button type="button" class="chip" data-template="gentle">温柔一点</button>
+            <button type="button" class="chip" data-template="playful">俏皮一点</button>
+            <button type="button" class="chip" data-template="deep">深情一点</button>
+            <button type="button" class="chip" data-template="short">短短一句</button>
+          </div>
+        </section>
+
+        <!-- 03 照片墙 -->
+        <section class="form-section">
+          <div class="section-head">
+            <span class="num">03</span>
+            <div><h3>照片墙</h3><p>放几张你们的回忆，最多 9 张</p></div>
+          </div>
+          <div class="photo-grid" id="photoGrid"></div>
+          <div class="photo-tools">
+            <button type="button" class="btn btn-soft" id="addPhotoBtn">＋ 添加照片</button>
+            <span class="help" id="photoHelp">没有照片也没关系，页面会自动生成好看的祝福卡片。</span>
+          </div>
+          <input type="file" id="photoInput" accept="image/jpeg,image/png,image/gif,image/webp" multiple hidden>
+          <p class="help">建议 JPG / PNG；手机原图会自动压缩，动图保留原样。每张图配一句话会更打动人。</p>
+        </section>
+
+        <!-- 04 声音 -->
+        <section class="form-section">
+          <div class="section-head">
+            <span class="num">04</span>
+            <div><h3>声音</h3><p>让 TA 听见你的祝福</p></div>
+          </div>
+
+          <div class="sub-block">
+            <div class="sub-head"><b>背景音乐</b><span>打开页面时轻轻播放</span></div>
+            <div class="segmented" id="musicModeGroup" role="group" aria-label="背景音乐">
+              <button type="button" data-mode="synth" class="active">内置音乐盒</button>
+              <button type="button" data-mode="file">上传 MP3</button>
+              <button type="button" data-mode="none">不要音乐</button>
+            </div>
+            <div class="upload-row hidden" id="musicUploadRow">
+              <button type="button" class="btn btn-soft" id="pickMusicBtn">选择音频文件</button>
+              <span class="file-name" id="musicName">未选择</span>
+              <input type="file" id="musicFile" accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/mp4,audio/x-m4a" hidden>
+            </div>
+            <audio id="musicPreview" class="preview-audio hidden" controls preload="none"></audio>
+            <p class="help" id="musicHelp">内置八音盒会演奏一段轻柔的《生日快乐》，无需上传文件。</p>
+          </div>
+
+          <div class="sub-block">
+            <div class="sub-head"><b>录音</b><span>可选 · MP3 / M4A / WAV</span></div>
+            <div class="upload-row">
+              <button type="button" class="btn btn-soft" id="pickVoiceBtn">上传录音</button>
+              <span class="file-name" id="voiceName">还没有录音</span>
+              <button type="button" class="mini-btn hidden" id="removeVoiceBtn">移除</button>
+              <input type="file" id="voiceFile" accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/mp4,audio/x-m4a" hidden>
+            </div>
+            <audio id="voicePreview" class="preview-audio hidden" controls preload="none"></audio>
+            <p class="help">可以提前用手机录音，导出为 MP3 后上传。没有录音时，页面会自动隐藏录音区。</p>
+          </div>
+        </section>
+
+        <!-- 05 风格 -->
+        <section class="form-section">
+          <div class="section-head">
+            <span class="num">05</span>
+            <div><h3>风格</h3><p>选一个和 TA 最搭的颜色</p></div>
+          </div>
+          <div class="theme-row" id="themeRow">
+            <button type="button" class="theme-swatch theme-sakura active" data-theme="sakura" aria-label="樱粉">
+              <span class="swatch-dot"></span><b>樱粉</b><small>温柔浪漫</small>
+            </button>
+            <button type="button" class="theme-swatch theme-midnight" data-theme="midnight" aria-label="星夜">
+              <span class="swatch-dot"></span><b>星夜</b><small>安静璀璨</small>
+            </button>
+            <button type="button" class="theme-swatch theme-mint" data-theme="mint" aria-label="薄荷">
+              <span class="swatch-dot"></span><b>薄荷</b><small>清新明亮</small>
+            </button>
+            <button type="button" class="theme-swatch theme-sunset" data-theme="sunset" aria-label="落日">
+              <span class="swatch-dot"></span><b>落日</b><small>温暖热烈</small>
+            </button>
+          </div>
+          <div class="font-row">
+            <span class="font-label">字体</span>
+            <div class="segmented" id="fontGroup" role="group" aria-label="字体">
+              <button type="button" data-font="default" class="active">默认</button>
+              <button type="button" data-font="serif">宋体</button>
+              <button type="button" data-font="kai">楷体</button>
+              <button type="button" data-font="round">圆体</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="saveBtn">生成祝福链接</button>
+          <button type="button" class="btn btn-ghost" id="previewBtn">保存并预览</button>
+          <button type="button" class="btn btn-text" id="resetBtn">清空重写</button>
+        </div>
+        <p class="save-note" id="saveNote">保存后会生成专属链接和二维码，之后可以随时回来修改，链接不变。</p>
+      </form>
+    </section>
+
+    <aside class="preview-panel">
+      <div class="preview-sticky">
+        <div class="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen" id="phonePreview" data-theme="sakura">
+            <div class="pv-bubbles"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="pv-heart">♡</div>
+            <p class="pv-eyebrow">A LITTLE SURPRISE</p>
+            <h3>生日快乐</h3>
+            <p class="pv-to">给 <b id="pvRecipient">小寿星</b></p>
+            <div class="pv-cake">🎂</div>
+            <div class="pv-pill">输入生日密码 · 进入惊喜</div>
+            <div class="pv-photos" id="pvPhotos"></div>
+            <p class="pv-from">from <span id="pvSender">一个爱你的人</span></p>
+          </div>
+        </div>
+        <p class="preview-note">实时预览 · 最终效果以生成页面为准</p>
+        <div class="preview-tip">
+          <b>怎么发给 TA？</b>
+          <p>生成后会得到链接和二维码。同一个 Wi-Fi 下扫码即可打开；异地朋友需要把项目部署到公网，详见 README 的「部署到公网」。</p>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- 我的祝福 -->
+  <section class="list-panel hidden" id="listPanel">
+    <div class="list-head">
+      <div>
+        <p class="eyebrow">MY BLESSINGS</p>
+        <h2>我的祝福</h2>
+        <p class="editor-sub">每一份都可以继续修改，链接不会变。</p>
+      </div>
+      <button class="btn btn-soft" id="backToEditorBtn" type="button">← 返回制作</button>
+    </div>
+    <div class="list-grid" id="listGrid"></div>
+    <div class="empty-state hidden" id="emptyState">
+      <div class="empty-icon">✉</div>
+      <h3>还没有做过祝福</h3>
+      <p>从第一份开始吧，几分钟就能做好。</p>
+      <button class="btn btn-primary" id="emptyNewBtn" type="button">制作第一份祝福</button>
+    </div>
+  </section>
+</div>
+
+<!-- 结果弹窗 -->
+<div class="modal hidden" id="resultModal" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal-card">
+    <button class="modal-close" id="closeModalBtn" type="button" aria-label="关闭">×</button>
+    <p class="eyebrow">READY TO SHARE</p>
+    <h2 id="resultTitle">祝福已经准备好了</h2>
+    <p class="modal-sub" id="resultSub">把链接或二维码发给 TA，输入生日密码就能打开。</p>
+
+    <div class="result-body">
+      <div class="qr-wrap">
+        <div class="qr-box" id="qrBox"></div>
+        <button class="btn btn-soft btn-sm" id="downloadQrBtn" type="button">下载二维码</button>
+      </div>
+      <div class="link-wrap">
+        <label class="field">
+          <span>分享链接</span>
+          <div class="copy-row">
+            <input id="shareLink" type="text" readonly>
+            <button class="btn btn-primary btn-sm" id="copyLinkBtn" type="button">复制</button>
+          </div>
+        </label>
+        <label class="field">
+          <span>链接使用的地址</span>
+          <select id="baseSelect"></select>
+        </label>
+        <div class="result-actions">
+          <button class="btn btn-soft" id="openShareBtn" type="button">打开分享页</button>
+          <button class="btn btn-ghost" id="editAgainBtn" type="button">继续编辑</button>
+        </div>
+        <p class="help" id="shareHint"></p>
+      </div>
+    </div>
+
+    <div class="result-note">
+      <b>微信 / QQ 打开提示</b>
+      <p>同一个 Wi-Fi 下，手机扫码会打开局域网地址；发给异地朋友时，请把项目部署到公网，并在 config.json 里填写 publicBaseUrl，生成的链接就会是公网地址。</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/static/qrcode.min.js"></script>
+<script src="/static/studio.js"></script>
+</body>
+</html>
